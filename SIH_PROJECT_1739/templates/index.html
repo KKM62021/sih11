@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GHI Webiste</title>
+    <link rel="stylesheet" href="style.css" />
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            position: relative;
+            overflow-x: hidden; /* Prevent horizontal scroll */
+        }
+
+        header {
+            position: fixed;
+            width: 100%;
+            z-index: 10;
+            background: rgba(255, 255, 255, 0.8);
+        }
+
+        header h1 {
+            display: inline;
+            margin: 0;
+            padding: 10px;
+        }
+
+        header nav {
+            display: inline;
+        }
+
+        header nav a {
+            margin: 0 15px;
+            text-decoration: none;
+            color: #000;
+        }
+
+        header nav a.active {
+            font-weight: bold;
+        }
+
+        .home {
+            height: 100vh;
+            position: relative;
+            overflow: hidden;
+            background: url('assets/background.jpg') no-repeat center center/cover; /* Add your background */
+        }
+
+        .home .title {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 3em;
+        }
+
+        .about {
+            padding: 50px;
+            background-color: #f8f9fa;
+        }
+
+        .container {
+            position: relative;
+            max-width: 600px;
+            margin: 20px auto; 
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1);
+            z-index: 1; 
+            color: white; 
+            overflow: hidden; /* Hide overflow for video */
+        }
+
+        .video-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .video-background video {
+            min-width: 100%;
+            min-height: 100%;
+            width: auto;
+            height: auto;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .uploaded-files {
+            margin-top: 20px;
+        }
+
+        .uploaded-files ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .uploaded-files ul li {
+            padding: 5px 0;
+        }
+
+        .uploaded-files ul li a {
+            color: #007bff;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .uploaded-files ul li a:hover {
+            color: red;
+            text-decoration: underline;
+        }
+
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 100px;
+            padding: 0 5%;
+            position: absolute;
+            width: 100%;
+            z-index: 100;
+        }
+
+        header h1 {
+            font-size: 40px;
+            color: white;
+        }
+
+        header nav {
+            display: flex;
+            gap: 30px;
+        }
+
+        header nav a {
+            text-decoration: none;
+            font-size: 20px;
+            font-weight: 600;
+            padding: 8px 16px;
+            border-radius: 99px;
+            transition: 0.3s;
+            color: white;
+        }
+
+        header nav a.active {
+            background: #5247B9;
+        }
+
+        header nav a:hover {
+            background: #5247B9;
+            color: red;
+        }
+
+        header nav:hover > a:not(:hover) {
+            background: none;
+        }
+
+        .home {
+            display: flex;
+            height: 100dvh;
+            background: linear-gradient(to top, #D2E2FB 30%, #86A8DB);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .home img {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            pointer-events: none;
+        }
+
+        .home .title {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: medium;
+            text-shadow: 0px 0px 4px rgba(0, 0, 0, 0.25);
+            width: 60%;
+        }
+
+        .about {
+            padding: 50px;
+            background: #3B3291;
+            color: white;
+            position: relative;
+            z-index: 100;
+        }
+
+        .about h1 {
+            font-size: 40px;
+        }
+        .home .title .scroll {
+            width: 125px;
+            height: 50px;
+            background-color: rebeccapurple;
+            align-self: center;
+            margin: 0 auto;text-align: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 15px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <header style="background-color: transparent;">
+        <h1>Solar Scope</h1>
+        <nav>
+            <a href="#" class="active">Home</a>
+            <a href=".about">About</a>
+            <a href="#">Contact</a>
+        </nav>
+    </header>
+    
+    <section class="home">
+        <img src="{{ url_for('static', filename='mount2.png') }}" alt="Mountain 2" class="mount2" />
+        <img src="{{ url_for('static', filename='mount1.png') }}" alt="Mountain 1" class="mount1" />
+        <img src="{{ url_for('static', filename='bush2.png') }}" alt="Bush 2" class="bush2" />
+
+        <div class="title">
+            <h3>Building Integrated Photo-voltaic (BIPV) potential assessment and visualisation using LOD-1 3D City Model</h3>
+            <p>This project aims to develop an interactive application for assessing Building Integrated Photovoltaic (BIPV) potential using 3D city models derived from Indian satellite data (Cartosat-1 and Cartosat-2/3). By creating Level of Detail 1 (LoD-1) models, the application will simulate building shadows and calculate sunlight exposure on building surfaces. It targets policy-makers, solar energy providers, architects, and citizens, addressing the lack of accessible software for city-wide BIPV assessments.</p>
+            <div class="scroll text-center text-white"><a href="#container" class="text-white">Scroll Down &darr;</a></div>
+        </div>
+
+        <img src="{{ url_for('static', filename='bush1.png') }}" alt="Bush 1" class="bush1" />
+        <img src="{{ url_for('static', filename='leaf2.png') }}" alt="Leaf 2" class="leaf2" />
+        <img src="{{ url_for('static', filename='leaf1.png') }}" alt="Leaf 1" class="leaf1" />
+    </section>
+
+    <section class="about">
+        <div class="container my-3" id="container">
+            <div class="video-background">
+                <video autoplay muted loop>
+                    <source src="{{ url_for('static', filename='video.mp4') }}" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            </div>
+            <h1>Upload Your File</h1>
+            <form action="/" method="POST" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label for="file">Choose a file (.gltf format):</label>
+                    <input type="file" class="form-control-file" id="file" name="file" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="sun_date">Enter date for Sun Position:</label>
+                    <input type="date" class="form-control" id="sun_date" name="sun_date" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="sun_time">Enter time for Sun Position:</label>
+                    <input type="time" class="form-control" id="sun_time" name="sun_time" required>
+                </div>
+
+                <div class="d-flex justify-content-between">
+                    <button type="submit" class="btn btn-success">Upload</button>
+                    <button type="button" class="btn btn-info" onclick="redirectToVisualize()">Visualize</button>
+                    <a href="{{ url_for('convert') }}" class="btn btn-warning">Convert</a>
+                </div>
+            </form>
+
+            {% if sun_azimuth is not none and sun_elevation is not none %}
+                <div class="alert alert-info mt-3">
+                    <h5>Sun Position Results:</h5>
+                    <p>Sun Azimuth: {{ sun_azimuth }} degrees</p>
+                    <p>Sun Elevation: {{ sun_elevation }} degrees</p>
+                </div>
+            {% endif %}
+
+            <div class="uploaded-files">
+                <h2>Uploaded Files</h2>
+                <ul>
+                    {% for file in uploaded_files %}
+                        <li><a href="{{ url_for('uploaded_file', filename=file) }}">{{ file }}</a></li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    
+    
+    <script src="script.js"></script>
+    <script>
+        // Your existing JavaScript animations
+        const title = document.querySelector('.title');
+        const leaf1 = document.querySelector('.leaf1');
+        const leaf2 = document.querySelector('.leaf2');
+        const bush2 = document.querySelector('.bush2');
+        const mount1 = document.querySelector('.mount1');
+        const mount2 = document.querySelector('.mount2');
+    
+        document.addEventListener('scroll', function() {
+            let value = window.scrollY;
+            title.style.marginTop = value * 1.1 + 'px';
+            leaf1.style.marginLeft = -value + 'px';
+            leaf2.style.marginLeft = value + 'px';
+            bush2.style.marginBottom = -value + 'px';
+            mount1.style.marginBottom = -value * 1.1 + 'px';
+            mount2.style.marginBottom = -value * 1.2 + 'px';
+        });
+        
+        
+
+
+        function redirectToVisualize() {
+    // Get values of the elevation and azimuth sliders
+    const elevation = document.getElementById('sun_date').value; // Ensure these IDs correspond correctly
+    const azimuth = document.getElementById('sun_time').value;
+    console.log(azimuth)
+    console.log(elevation)
+
+    // This function calculates the solar position (azimuth and elevation)
+// for a given date, time, latitude, and longitude.
+function calculateSolarPosition(date, latitude, longitude) {
+    // Convert date to Julian date
+    const julianDate = toJulianDate(date);
+
+    // Number of centuries since J2000.0
+    const T = (julianDate - 2451545.0) / 36525.0;
+
+    // Calculate solar coordinates
+    const solarCoords = getSolarCoordinates(T);
+
+    // Local sidereal time in degrees
+    const LST = getLocalSiderealTime(date, longitude);
+
+    // Hour angle of the Sun in degrees
+    const hourAngle = LST - solarCoords.rightAscension;
+
+    // Convert latitude to radians
+    const latitudeRad = toRadians(latitude);
+
+    // Calculate the elevation angle
+    const elevation = Math.asin(
+        Math.sin(latitudeRad) * Math.sin(toRadians(solarCoords.declination)) +
+        Math.cos(latitudeRad) * Math.cos(toRadians(solarCoords.declination)) * Math.cos(toRadians(hourAngle))
+    );
+
+    // Calculate the azimuth angle
+    const azimuth = Math.atan2(
+        -Math.sin(toRadians(hourAngle)),
+        Math.tan(toRadians(solarCoords.declination)) * Math.cos(latitudeRad) -
+        Math.sin(latitudeRad) * Math.cos(toRadians(hourAngle))
+    );
+
+    return {
+        elevation: toDegrees(elevation), // Convert elevation from radians to degrees
+        azimuth: (toDegrees(azimuth) + 360) % 360 // Convert azimuth from radians to degrees and normalize
+    };
+}
+
+// Helper function to convert a date to Julian date
+function toJulianDate(date) {
+    return (date / 86400000) + 2440587.5;
+}
+
+// Helper function to convert degrees to radians
+function toRadians(degrees) {
+    return degrees * Math.PI / 180;
+}
+
+// Helper function to convert radians to degrees
+function toDegrees(radians) {
+    return radians * 180 / Math.PI;
+}
+
+// Calculate the right ascension and declination of the Sun
+function getSolarCoordinates(T) {
+    // Mean anomaly of the Sun in degrees
+    const M = (357.5291 + 35999.0503 * T) % 360;
+
+    // Mean longitude of the Sun in degrees
+    const L0 = (280.46646 + 36000.76983 * T) % 360;
+
+    // Ecliptic longitude of the Sun in degrees
+    const lambda = L0 + (1.914602 - 0.004817 * T - 0.000014 * T * T) * Math.sin(toRadians(M)) +
+        (0.019993 - 0.000101 * T) * Math.sin(toRadians(2 * M)) +
+        0.000289 * Math.sin(toRadians(3 * M));
+
+    // Obliquity of the ecliptic in degrees
+    const epsilon = 23.439 - 0.0000004 * T;
+
+    // Right ascension of the Sun in degrees
+    const rightAscension = toDegrees(Math.atan2(Math.cos(toRadians(epsilon)) * Math.sin(toRadians(lambda)), Math.cos(toRadians(lambda))));
+
+    // Declination of the Sun in degrees
+    const declination = toDegrees(Math.asin(Math.sin(toRadians(epsilon)) * Math.sin(toRadians(lambda))));
+
+    return { rightAscension, declination };
+}
+
+// Calculate the local sidereal time
+function getLocalSiderealTime(date, longitude) {
+    const jd = toJulianDate(date);
+    const T = (jd - 2451545.0) / 36525.0;
+    const GMST = 280.46061837 + 360.98564736629 * (jd - 2451545) + T * T * (0.000387933 - T / 38710000);
+    return (GMST + longitude) % 360;
+}
+
+// Example usage:
+// Example of a specific date and time input:
+// Let's say you want to calculate for September 25, 2024, at 15:30 UTC
+// Example date and time inputs
+const dateInput = elevation; // Format: YYYY-MM-DD
+const timeInput = azimuth; // Format: HH:MM (24-hour format)
+
+// Split the date string to extract individual components
+const [year, month, day] = dateInput.split("-").map(Number);
+
+// Split the time string to extract hours and minutes
+const [hours, minutes] = timeInput.split(":").map(Number);
+
+longitude = 280.46061837
+latitude = 360.98564736629
+
+// Create a Date object in UTC
+const dateObject = new Date(Date.UTC(year, month - 1, day, hours, minutes)); // month - 1 because Date uses 0-based month
+
+// Get year, month, day, hours, and minutes
+console.log(`Year: ${dateObject.getFullYear()}`);
+console.log(`Month: ${dateObject.getMonth() + 1}`); // Adjusted to 1-based format
+console.log(`Day: ${dateObject.getDate()}`);
+console.log(`Hours: ${dateObject.getHours()}`);
+console.log(`Minutes: ${dateObject.getMinutes()}`);
+
+
+const solarPosition = calculateSolarPosition(dateObject, latitude, longitude);
+const newAzimuth = solarPosition.azimuth.toFixed(2);
+const newElevation = solarPosition.elevation.toFixed(2)
+console.log(`Azimuth: ${newAzimuth} degrees`);
+console.log(`Elevation: ${newElevation} degrees`);
+
+
+    // Redirect to visualize.html with the values as URL parameters
+    window.location.href = `{{ url_for('visualize') }}?elevation=${newElevation}&azimuth=${newAzimuth}`;
+}
+
+
+
+    </script>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    </body>
+</html>

@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>File Upload</title>
+    <link
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        overflow: hidden; /* Prevent scrollbars */
+        position: relative; /* Needed for absolute positioning of the pseudo-element */
+      }
+
+      body::before {
+        content: "";
+        position: fixed; /* Fixed to cover the entire viewport */
+        top: 0;
+        left: 0;
+        width: 100%; 
+        height: 100%;
+        background-image: url("/static/724708.webp"); /* Add background image */
+        background-size: cover; /* Ensure the image covers the body */
+        background-position: center; /* Center the image */
+        filter: blur(5px); /* Apply blur effect */
+        z-index: -1; /* Place it behind all other content */
+      }
+
+      .container {
+        position: relative;
+        max-width: 600px;
+        margin: 0 auto;
+        background-color: rgba(
+          255,
+          255,
+          255,
+          0.8
+        ); /* Semi-transparent background */
+        padding: 30px;
+        border-radius: 8px;
+        box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1);
+        z-index: 1; /* Make sure container is on top of video */
+        color: white; /* Change text color for readability */
+        border-radius: 15px;
+      }
+
+      .video-background {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -1;
+        overflow: hidden;
+        border-radius: 15px;
+      }
+      .video-background video {
+        min-width: 100%;
+        min-height: 100%;
+        width: auto;
+        height: auto;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        border-radius: 15px;
+      }
+      h1 {
+        text-align: center;
+        margin-bottom: 20px;
+        color: white;
+      }
+      .btn {
+        width: 30%;
+      }
+      .uploaded-files {
+        margin-top: 20px;
+      }
+      .uploaded-files ul {
+        list-style: none;
+        padding: 0;
+      }
+      .uploaded-files ul li {
+        padding: 5px 0;
+      }
+      .uploaded-files ul li a {
+        color: #007bff;
+        text-decoration: none;
+        transition: color 0.3s;
+      }
+      .uploaded-files ul li a:hover {
+        color: #0056b3;
+        text-decoration: underline;
+      }
+      @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap");
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Poppins", sans-serif;
+      }
+
+      header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        height: 100px;
+        padding: 0 5%;
+        position: absolute;
+        width: 100%;
+        z-index: 100;
+      }
+      header h1 {
+        font-size: 40px;
+        color: white;
+      }
+      header nav {
+        display: flex;
+        gap: 30px;
+      }
+      header nav a {
+        text-decoration: none;
+        font-size: 20px;
+        font-weight: 600;
+        padding: 8px 16px;
+        border-radius: 99px;
+        transition: 0.3s;
+        color: white;
+      }
+      header nav a.active {
+        background: #5247b9;
+      }
+      header nav a:hover {
+        background: #5247b9;
+      }
+      header nav:hover > a:not(:hover) {
+        background: none;
+      }
+
+      .home {
+        display: flex;
+        height: 100dvh;
+        background: linear-gradient(to top, #d2e2fb 30%, #86a8db);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .home img {
+        position: absolute;
+        bottom: 0;
+        width: 100%;
+        pointer-events: none;
+      }
+
+      .home .title {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        color: white;
+        font-size: 80px;
+        text-shadow: 0px 0px 4px rgba(0, 0, 0, 0.25);
+      }
+
+      .about {
+        padding: 50px;
+        background: #3b3291;
+        color: white;
+        position: relative;
+        z-index: 100;
+      }
+      .about h1 {
+        font-size: 40px;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Navbar -->
+    <header>
+      <h1>Logo</h1>
+      <nav>
+        <a href="#" class="active">Home</a>
+        <a href=".about">About</a>
+        <a href="#">Services</a>
+        <a href="#">Contact</a>
+      </nav>
+    </header>
+
+    <section class="home">
+      <img src="{{ url_for('static', filename='mount2.png') }}" class="mount2" />
+      <img src="{{ url_for('static', filename='mount1.png') }}" class="mount1" />
+      <img src="{{ url_for('static', filename='bush2.png') }}" class="bush2" />
+
+      <h1 class="title">Parallax</h1>
+
+      <img src="{{ url_for('static', filename='bush1.png') }}" class="bush1" />
+      <img src="{{ url_for('static', filename='leaf2.png') }}" class="leaf2" />
+      <img src="{{ url_for('static', filename='leaf1.png') }}" class="leaf1" />
+    </section>
+    <section class="about">
+      <div class="container my-3">
+        <div class="video-background">
+          <video autoplay muted loop>
+            <source
+              src="{{ url_for('static', filename='video.mp4') }}"
+              type="video/mp4"
+            />
+            Your browser does not support the video tag.
+          </video>
+        </div>
+
+        <h1>Upload Your File</h1>
+        <form action="/" method="POST" enctype="multipart/form-data">
+          <div class="form-group">
+            <label for="file">Choose a file:</label>
+            <input
+              type="file"
+              class="form-control-file"
+              id="file"
+              name="file"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="ghi_date">Enter date for GHI:</label>
+            <input
+              type="date"
+              class="form-control"
+              id="ghi_date"
+              name="ghi_date"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="ghi_time">Enter time for GHI:</label>
+            <input
+              type="time"
+              class="form-control"
+              id="ghi_time"
+              name="ghi_time"
+              required
+            />
+          </div>
+
+          <div class="d-flex justify-content-between">
+            <button type="submit" class="btn btn-success">Upload</button>
+            <button type="submit" formaction="/visualize" class="btn btn-info">
+              Visualize
+            </button>
+            <a href="{{ url_for('convert') }}" class="btn btn-warning"
+              >Convert</a
+            >
+          </div>
+        </form>
+
+        <div class="uploaded-files">
+          <h2>Uploaded Files</h2>
+          <ul>
+            {% for file in uploaded_files %}
+            <li>
+              <a href="{{ url_for('uploaded_file', filename=file) }}"
+                >{{ file }}</a
+              >
+            </li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+    </section>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+      const title = document.querySelector(".title");
+      const leaf1 = document.querySelector(".leaf1");
+      const leaf2 = document.querySelector(".leaf2");
+      const bush2 = document.querySelector(".bush2");
+      const mount1 = document.querySelector(".mount1");
+      const mount2 = document.querySelector(".mount2");
+
+      document.addEventListener("scroll", function () {
+        let value = window.scrollY;
+        // console.log(value)
+        title.style.marginTop = value * 1.1 + "px";
+
+        leaf1.style.marginLeft = -value + "px";
+        leaf2.style.marginLeft = value + "px";
+
+        bush2.style.marginBottom = -value + "px";
+
+        mount1.style.marginBottom = -value * 1.1 + "px";
+        mount2.style.marginBottom = -value * 1.2 + "px";
+      });
+    </script>
+  </body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <header style="background-color: transparent;">
+        <h1>Solar Scope</h1>
+        <nav>
+            <a href="#" class="active">Home</a>
+            <a href=".about">About</a>
+            <a href="#">Contact</a>
+        </nav>
+    </header>
+    
+    <section class="home">
+        <img src="{{ url_for('static', filename='mount2.png') }}" alt="Mountain 2" class="mount2" />
+        <img src="{{ url_for('static', filename='mount1.png') }}" alt="Mountain 1" class="mount1" />
+        <img src="{{ url_for('static', filename='bush2.png') }}" alt="Bush 2" class="bush2" />
+
+        <div class="title">
+            <h3>Building Integrated Photo-voltaic (BIPV) potential assessment and visualisation using LOD-1 3D City Model</h3>
+            <p>This project aims to develop an interactive application for assessing Building Integrated Photovoltaic (BIPV) potential using 3D city models derived from Indian satellite data (Cartosat-1 and Cartosat-2/3). By creating Level of Detail 1 (LoD-1) models, the application will simulate building shadows and calculate sunlight exposure on building surfaces. It targets policy-makers, solar energy providers, architects, and citizens, addressing the lack of accessible software for city-wide BIPV assessments.</p>
+            <div class="scroll text-center text-white"><a href="#container" class="text-white">Scroll Down &darr;</a></div>
+        </div>
+
+        <img src="{{ url_for('static', filename='bush1.png') }}" alt="Bush 1" class="bush1" />
+        <img src="{{ url_for('static', filename='leaf2.png') }}" alt="Leaf 2" class="leaf2" />
+        <img src="{{ url_for('static', filename='leaf1.png') }}" alt="Leaf 1" class="leaf1" />
+    </section>
+
+    <section class="about">
+        <div class="container my-3" id="container">
+            <div class="video-background">
+                <video autoplay muted loop>
+                    <source src="{{ url_for('static', filename='video.mp4') }}" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            </div>
+            <h1>Upload Your File</h1>
+            <form action="/" method="POST" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label for="file">Choose a file (.gltf format):</label>
+                    <input type="file" class="form-control-file" id="file" name="file" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="sun_date">Enter date for Sun Position:</label>
+                    <input type="date" class="form-control" id="sun_date" name="sun_date" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="sun_time">Enter time for Sun Position:</label>
+                    <input type="time" class="form-control" id="sun_time" name="sun_time" required>
+                </div>
+
+                <div class="d-flex justify-content-between">
+                    <button type="submit" class="btn btn-success">Upload</button>
+                    <button type="button" class="btn btn-info" onclick="redirectToVisualize()">Visualize</button>
+                    <a href="{{ url_for('convert') }}" class="btn btn-warning">Convert</a>
+                </div>
+            </form>
+
+            {% if sun_azimuth is not none and sun_elevation is not none %}
+                <div class="alert alert-info mt-3">
+                    <h5>Sun Position Results:</h5>
+                    <p>Sun Azimuth: {{ sun_azimuth }} degrees</p>
+                    <p>Sun Elevation: {{ sun_elevation }} degrees</p>
+                </div>
+            {% endif %}
+
+            <div class="uploaded-files">
+                <h2>Uploaded Files</h2>
+                <ul>
+                    {% for file in uploaded_files %}
+                        <li><a href="{{ url_for('uploaded_file', filename=file) }}">{{ file }}</a></li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    

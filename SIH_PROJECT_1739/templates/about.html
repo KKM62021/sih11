@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>About - Solar Scope</title>
+    <link rel="stylesheet" href="style.css" />
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            position: relative;
+            overflow-x: hidden;
+            background: linear-gradient(to top, #D2E2FB 30%, #86A8DB);
+            color: white;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 10;
+            background: rgba(255, 255, 255, 0.8);
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+        }
+
+        header h1 {
+            display: inline;
+            margin: 0;
+            padding: 10px;
+            color: black;
+        }
+
+        header nav {
+            display: inline;
+        }
+
+        header nav a {
+            margin: 0 15px;
+            text-decoration: none;
+            color: #000;
+        }
+
+        header nav a.active {
+            font-weight: bold;
+        }
+
+        .about-section {
+            padding: 100px 20px;
+            background-color: rgba(0, 0, 0, 0.6);
+            border-radius: 10px;
+            max-width: 800px;
+            margin: 150px auto;
+        }
+
+        .about-section h1 {
+            font-size: 36px;
+            margin-bottom: 20px;
+        }
+
+        .about-section p {
+            font-size: 18px;
+            line-height: 1.6;
+        }
+
+        footer {
+            text-align: center;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+
+    <header style="margin: 0;">
+        <h1>Solar Scope</h1>
+        <nav>
+            <a href="/index.html" class="active">Home</a>
+            <a href="/about">About</a>
+            <a href="#">Contact</a>
+        </nav>
+    </header>
+
+    <section class="about-section">
+        <h1>About Us</h1>
+        <p>Solar Scope is dedicated to advancing the understanding and implementation of solar energy solutions. Our mission is to provide accurate assessments of Building Integrated Photovoltaic (BIPV) potential using advanced 3D city modeling techniques.</p>
+        <p>We leverage satellite data from sources like Cartosat-1 and Cartosat-2/3 to develop detailed Level of Detail 1 (LoD-1) models. Our interactive application aims to simulate building shadows and calculate sunlight exposure, thereby helping policy-makers, solar energy providers, architects, and citizens make informed decisions regarding solar energy deployment.</p>
+        <p>Join us in our journey towards a sustainable future through the power of solar energy!</p>
+    </section>
+
+    <footer>
+        <p>&copy; 2024 Solar Scope. All rights reserved.</p>
+    </footer>
+
+    <script src="script.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File Upload to GLTF Converter</title>
+    <script src="https://threejs.org/build/three.min.js"></script>
+    <script src="https://threejs.org/examples/js/loaders/OBJLoader.js"></script>
+    <script src="https://threejs.org/examples/js/loaders/FBXLoader.js"></script>
+    <script src="https://threejs.org/examples/js/loaders/GLTFLoader.js"></script>
+    <script src="https://threejs.org/examples/js/loaders/ColladaLoader.js"></script>
+    <script src="https://threejs.org/examples/js/loaders/3DSLoader.js"></script>
+    <script src="https://threejs.org/examples/js/exporters/GLTFExporter.js"></script>
+</head>
+<body>
+    <input type="file" id="fileInput" accept=".obj,.fbx,.gltf,.glb,.dae,.3ds" />
+    <button id="submitButton">Convert to GLTF</button>
+
+    <script>
+        document.getElementById('submitButton').addEventListener('click', () => {
+            const fileInput = document.getElementById('fileInput');
+            const file = fileInput.files[0];
+
+            if (!file) {
+                alert("Please upload a file.");
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const contents = event.target.result;
+                convertToGLTF(file.type, contents);
+            };
+            reader.readAsArrayBuffer(file);
+        });
+
+        function convertToGLTF(fileType, fileContent) {
+            let loader;
+            const scene = new THREE.Scene();
+
+            if (fileType.includes("obj")) {
+                loader = new THREE.OBJLoader();
+            } else if (fileType.includes("fbx")) {
+                loader = new THREE.FBXLoader();
+            } else if (fileType.includes("gltf") || fileType.includes("glb")) {
+                const gltfLoader = new THREE.GLTFLoader();
+                gltfLoader.parse(fileContent, (gltf) => {
+                    scene.add(gltf.scene);
+                    exportGLTF(scene);
+                }, (error) => {
+                    console.error("Error loading GLTF:", error);
+                    alert("Failed to load GLTF file.");
+                });
+                return; // Early return as the loader is async
+            } else if (fileType.includes("dae")) {
+                loader = new THREE.ColladaLoader();
+            } else if (fileType.includes("3ds")) {
+                loader = new THREE.ThreeDSLoader();
+            } else {
+                alert("Unsupported file type.");
+                return;
+            }
+
+            loader.parse(fileContent, (object) => {
+                scene.add(object);
+                exportGLTF(scene);
+            }, (error) => {
+                console.error("An error occurred while parsing the file:", error);
+                alert("Failed to load the model. Please check the file format and try again.");
+            });
+        }
+
+        function exportGLTF(scene) {
+            const exporter = new THREE.GLTFExporter();
+            exporter.parse(scene, (result) => {
+                const output = JSON.stringify(result, null, 2);
+                const blob = new Blob([output], { type: 'application/json' });
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                link.download = 'model.gltf';
+                link.click();
+            }, { binary: false });
+        }
+    </script>
+</body>
+</html>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/examples/js/loaders/OBJLoader.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/examples/js/loaders/FBXLoader.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/examples/js/exporters/GLTFExporter.js"></script>

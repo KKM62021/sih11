@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>City Coordinates Finder</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+<body>
+
+    <div>
+        <h1>Find Coordinates of a Place</h1>
+        <input type="text" id="place-input" placeholder="Enter place name" required>
+        <button id="submit-btn">Submit</button>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        const API_KEY = '9cac55bc60474bd3be88c27e4284115f'; // Replace with your OpenCage API key
+
+        async function getCoordinates(city) {
+            const url = `https://api.opencagedata.com/geocode/v1/json?q=${encodeURIComponent(city)}&key=${API_KEY}`;
+
+            try {
+                const response = await axios.get(url);
+                const results = response.data.results;
+
+                if (results.length > 0) {
+                    const { geometry } = results[0];
+                    return {
+                        lat: geometry.lat,
+                        lng: geometry.lng,
+                    };
+                } else {
+                    throw new Error('No results found');
+                }
+            } catch (error) {
+                console.error('Error fetching coordinates:', error);
+                return null;
+            }
+        }
+
+        document.getElementById('submit-btn').addEventListener('click', async () => {
+            const placeInput = document.getElementById('place-input').value;
+            const resultDiv = document.getElementById('result');
+
+            if (placeInput) {
+                const coordinates = await getCoordinates(placeInput);
+                if (coordinates) {
+                    resultDiv.innerHTML = `Coordinates: Latitude: ${coordinates.lat}, Longitude: ${coordinates.lng}`;
+                } else {
+                    resultDiv.innerHTML = 'Could not find coordinates.';
+                }
+            } else {
+                resultDiv.innerHTML = 'Please enter a place name.';
+            }
+        });
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Convert Your Data</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 700px;
+            margin: 50px auto;
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #333;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        label {
+            font-size: 16px;
+            margin-bottom: 8px;
+            color: #333;
+        }
+        input[type="file"] {
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            background-color: #fafafa;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        input[type="file"]:hover {
+            background-color: #f0f0f0;
+        }
+        button {
+            padding: 12px;
+            background-color: #007bff;
+            color: white;
+            font-size: 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .alert {
+            color: red;
+            font-size: 14px;
+            margin-top: 15px;
+        }
+        .success {
+            color: green;
+            font-size: 14px;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Convert Your Data to GLTF</h1>
+        <form action="/convert" method="POST" enctype="multipart/form-data">
+            <div>
+                <label for="file">Select a file (Supported: SPH, DEM, GBL, OBJ, JSON, GEOJSON, SHP):</label>
+                <input type="file" id="file" name="file" accept=".sph, .dem, .gbl, .obj, .json, .geojson, .shp" required>
+            </div>
+            <button type="submit">Convert to GLTF</button>
+        </form>
+
+        <!-- Displaying alert or success messages -->
+        {% with messages = get_flashed_messages() %}
+          {% if messages %}
+            <ul class="alert">
+              {% for message in messages %}
+                <li>{{ message }}</li>
+              {% endfor %}
+            </ul>
+          {% endif %}
+        {% endwith %}
+    </div>
+</body>
+</html>

@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D City Model Viewer with PV Calculation</title>
+    <style>
+        body { margin: 0; overflow: hidden; }
+        canvas { display: block; }
+        #control-panel {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 10px;
+            border-radius: 10px;
+        }
+        #bipv-info {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 10px;
+            border-radius: 10px;
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div id="container3D"></div>
+
+    <div id="control-panel">
+        <div>
+            <label for="elevationSlider">Sun Elevation: </label>
+            <input type="range" id="elevationSlider" min="0" max="90" value="45">
+            <span id="elevationValue">45</span>°
+        </div>
+
+        <div>
+            <label for="azimuthSlider">Sun Azimuth: </label>
+            <input type="range" id="azimuthSlider" min="0" max="360" value="180">
+            <span id="azimuthValue">180</span>°
+        </div>
+
+        <div>
+            <label for="dateSelect">Select Dummy Date: </label>
+            <select id="dateSelect">
+                <option value="spring">March 21 (Spring)</option>
+                <option value="summer">June 21 (Summer)</option>
+                <option value="autumn">September 21 (Autumn)</option>
+                <option value="winter">December 21 (Winter)</option>
+            </select>
+        </div>
+    </div>
+
+    <div id="bipv-info">
+        <strong>BIPV Total Area:</strong> <span id="bipvArea">0</span> m²<br>
+        <strong>Rooftop PV Potential:</strong> <span id="rooftopPV">0</span> kWh
+    </div>
+
+    <canvas id="gltfCanvas"></canvas>
+
+    <script type="module">
+        import * as THREE from "https://cdn.skypack.dev/three@0.129.0/build/three.module.js";
+        import { OrbitControls } from "https://cdn.skypack.dev/three@0.129.0/examples/jsm/controls/OrbitControls.js";
+        import { GLTFLoader } from "https://cdn.skypack.dev/three@0.129.0/examples/jsm/loaders/GLTFLoader.js";
+
+        let scene, camera, renderer, controls, directionalLight, object;
+
+        // Dummy sun position data based on season
+        const sunPositions = {
+            spring: { elevation: 45, azimuth: 180 },
+            summer: { elevation: 75, azimuth: 180 },
+            autumn: { elevation: 45, azimuth: 180 },
+            winter: { elevation: 30, azimuth: 180 }
+        };
+
+        const energyGenerationRate = 5.50; // kWh/day per kW installed (based on Ahmedabad data)
+        let meshArea = 0;
+        let shadowedArea = 0;
+        let scalingFactor = 0;
+
+        function init() {
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0xf0f0f0);
+
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.set(10, 10, 20);
+            camera.lookAt(0, 0, 0);
+
+            renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('gltfCanvas'), antialias: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+
+            controls = new OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = true;
+
+            const groundGeometry = new THREE.PlaneGeometry(200, 200);
+            const groundMaterial = new THREE.MeshPhongMaterial({ color: 0xf5f5f5, side: THREE.DoubleSide });
+            const ground = new THREE.Mesh(groundGeometry, groundMaterial);
+            ground.rotation.x = -Math.PI / 2;
+            scene.add(ground);
+
+            const loader = new GLTFLoader();
+            loader.load('uploaded/ImageToStl.com_sih1739.gltf', function(gltf) {
+                object = gltf.scene;
+                object.traverse(function(child) {
+                    if (child.isMesh) {
+                        // No shadow rendering in this version
+                    }
+                });
+
+                const box = new THREE.Box3().setFromObject(object);
+                const modelHeight = box.max.y - box.min.y;
+                object.position.y = modelHeight / 2;
+
+                meshArea = calculateMeshArea(object);
+                scalingFactor = 46400 / meshArea;
+
+                scene.add(object);
+                calculateBIPV();
+            });
+
+            setupLighting();
+            setupEventListeners();
+            animate();
+        }
+
+        function calculateMeshArea(model) {
+            let totalArea = 0;
+            model.traverse(function(child) {
+                if (child.isMesh) {
+                    const geometry = child.geometry;
+                    geometry.computeBoundingBox();
+                    const bbox = geometry.boundingBox;
+                    const width = bbox.max.x - bbox.min.x;
+                    const depth = bbox.max.z - bbox.min.z;
+                    totalArea += width * depth;
+                }
+            });
+            return totalArea;
+        }
+
+        function setupLighting() {
+            directionalLight = new THREE.DirectionalLight(0xffffff, 1.0);
+            directionalLight.position.set(500, 500, 500);
+            scene.add(directionalLight);
+
+            const ambientLight = new THREE.AmbientLight(0x333333);
+            scene.add(ambientLight);
+        }
+
+        function setupEventListeners() {
+            const elevationSlider = document.getElementById('elevationSlider');
+            const azimuthSlider = document.getElementById('azimuthSlider');
+            const dateSelect = document.getElementById('dateSelect');
+
+            elevationSlider.addEventListener('input', function() {
+                const elevation = parseInt(elevationSlider.value);
+                document.getElementById('elevationValue').textContent = elevation;
+                setSunPosition(elevation, parseInt(azimuthSlider.value));
+            });
+
+            azimuthSlider.addEventListener('input', function() {
+                const azimuth = parseInt(azimuthSlider.value);
+                document.getElementById('azimuthValue').textContent = azimuth;
+                setSunPosition(parseInt(elevationSlider.value), azimuth);
+            });
+
+            dateSelect.addEventListener('change', function() {
+                const selectedSeason = dateSelect.value;
+                const { elevation, azimuth } = sunPositions[selectedSeason];
+
+                elevationSlider.value = elevation;
+                azimuthSlider.value = azimuth;
+
+                document.getElementById('elevationValue').textContent = elevation;
+                document.getElementById('azimuthValue').textContent = azimuth;
+
+                setSunPosition(elevation, azimuth);
+            });
+        }
+
+        function setSunPosition(elevation, azimuth) {
+            const distance = 500;
+
+            directionalLight.position.set(
+                distance * Math.cos(THREE.Math.degToRad(elevation)) * Math.sin(THREE.Math.degToRad(azimuth)),
+                distance * Math.sin(THREE.Math.degToRad(elevation)),
+                distance * Math.cos(THREE.Math.degToRad(elevation)) * Math.cos(THREE.Math.degToRad(azimuth))
+            );
+
+            calculateShadowImpact();
+            calculateBIPV();
+        }
+
+        function calculateShadowImpact() {
+            shadowedArea = 0;
+
+            if (object) {
+                object.traverse(function(child) {
+                    if (child.isMesh) {
+                        const shadowArea = calculateMeshShadow(child);
+                        shadowedArea += shadowArea;
+                    }
+                });
+            }
+        }
+
+        function calculateMeshShadow(mesh) {
+            const bbox = new THREE.Box3().setFromObject(mesh);
+            const area = (bbox.max.x - bbox.min.x) * (bbox.max.z - bbox.min.z);
+            return area * 0.3; // Simulating 30% shadow coverage
+        }
+
+        function calculateBIPV() {
+            if (meshArea > 0) {
+                const usableArea = (meshArea - shadowedArea) * scalingFactor * 0.75;
+                const rooftopPV = usableArea * energyGenerationRate;
+
+                document.getElementById('bipvArea').textContent = usableArea.toFixed(2);
+                document.getElementById('rooftopPV').textContent = rooftopPV.toFixed(2);
+            }
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+            controls.update();
+            renderer.render(scene, camera);
+        }
+
+        window.addEventListener('resize', function() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        function getQueryParam(param) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(param);
+        }
+
+        window.onload = function() {
+            const elevation = getQueryParam('elevation');
+            const azimuth = getQueryParam('azimuth');
+
+            // If the elevation and azimuth are provided in the URL, set the sun's position
+            if (elevation && azimuth) {
+                document.getElementById('elevationSlider').value = elevation;
+                document.getElementById('azimuthSlider').value = azimuth;
+                document.getElementById('elevationValue').textContent = elevation;
+                document.getElementById('azimuthValue').textContent = azimuth;
+
+                // Update sun position in the 3D scene
+                setSunPosition(parseInt(elevation), parseInt(azimuth));
+            }
+        };
+
+        init();
+    </script>
+</body>
+</html>
